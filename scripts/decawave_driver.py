@@ -49,6 +49,7 @@ class DecawaveDriver(Node):
         self.timer_period = 0.5 # seconds
         # self.declare_parameter(0.5)
         # Initiate Serial
+        self.serial_timeout = 10
         self.ser = serial.Serial(self.port_, self.baudrate_, timeout=0.1)
         self.ser.timeout=0.1
         self.get_logger().info('\33[96mConnected to "%s"\33[0m' % self.ser.portstr)
@@ -155,7 +156,7 @@ class DecawaveDriver(Node):
         self.ser.write(b'\x0c\x00')
         now = self.get_clock().now().to_msg()
         while (self.ser.inWaiting() < 21):
-            if float(self.get_clock().now().to_msg().sec - now.sec) > self.ser.timeout:
+            if float(self.get_clock().now().to_msg().sec - now.sec) > self.serial_timeout:
                 self.get_logger().warn("Malformed packet! Ignoring tag location.")
                 self.ser.flushInput()
                 return None
@@ -171,7 +172,7 @@ class DecawaveDriver(Node):
         self.anchor_packet_size = 20  # Size of anchor packet in bytes
         now = self.get_clock().now().to_msg()
         while (self.ser.inWaiting() < self.anchor_packet_size * self.tag.n_anchors):
-            if (self.get_clock().now().to_msg() - now) > self.serial_timeout:
+            if (self.get_clock().now().to_msg()._sec - now._sec) > self.serial_timeout:
                 self.get_logger().warn("Malformed packet! Ignoring anchors location.")
                 self.ser.flushInput()
                 return None
@@ -212,6 +213,7 @@ class DecawaveDriver(Node):
         self.odometry.pose.pose.position.y = self.tag.y
         self.odometry.pose.pose.position.z = self.tag.z
         self.odometry.header.frame_id = self.tag.header.frame_id
+        self.odometry.header.stamp = self.tag.header.stamp
 
     def euler_from_quaternion(self,x,y,z):
         """
@@ -261,7 +263,7 @@ class DecawaveDriver(Node):
     def run(self):
         self.create_rate(self.rate_)
         # self.rate = rclpy.Rate(self.rate_)
-        self.get_logger().info("\33[96mInitiating Driver...\33[0m")
+        
         # self.tag_pub_ = rclpy.Publisher('tag_pose', Tag, queue_size=1)
         # self.anchors_pub_ = rclpy.Publisher('tag_status', AnchorArray, queue_size=1)
         self.tag_pub_ = self.create_publisher(Odometry, 'tag_pub', 10) # 1 to queue_size
@@ -283,10 +285,11 @@ if __name__ == '__main__':
     try:
         rclpy.init()
         decawave_driver = DecawaveDriver()
+        decawave_driver.get_logger().info("\33[96mInitiating Driver...\33[0m")
         rclpy.spin(decawave_driver)
         decawave_driver.destroy_node()
         rclpy.shutdown()
         # dd = DecawaveDriver()
         # dd.run()
     except rclpy.ROSInterruptException:
-        self.get_logger().info("[Decawave Driver]: Closed!")
+       print("[Decawave Driver]: Closed!")
