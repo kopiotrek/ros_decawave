@@ -1,0 +1,2 @@
+Invoking command in '/home/pk/najnowsze_przepisywanie/ros_decawave/build/ros_decawave': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/foxy /usr/bin/cmake --build /home/pk/najnowsze_przepisywanie/ros_decawave/build/ros_decawave -- -j8 -l8
+Invoked command in '/home/pk/najnowsze_przepisywanie/ros_decawave/build/ros_decawave' returned '2': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/foxy /usr/bin/cmake --build /home/pk/najnowsze_przepisywanie/ros_decawave/build/ros_decawave -- -j8 -l8

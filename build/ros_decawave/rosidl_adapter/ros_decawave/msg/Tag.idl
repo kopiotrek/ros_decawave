@@ -1,0 +1,35 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from ros_decawave/msg/Tag.msg
+// generated code does not contain a copyright notice
+
+#include "std_msgs/msg/Header.idl"
+
+module ros_decawave {
+  module msg {
+    @verbatim (language="comment", text=
+      " Tag message structure. qf is the quality of this measurement.")
+    struct Tag {
+      std_msgs::msg::Header header;
+
+      @verbatim (language="comment", text=
+        "# in m")
+      double x;
+
+      @verbatim (language="comment", text=
+        "# in m")
+      double y;
+
+      @verbatim (language="comment", text=
+        "# in m")
+      double z;
+
+      @verbatim (language="comment", text=
+        "# in percent")
+      double qf;
+
+      @verbatim (language="comment", text=
+        "# number of anchors")
+      int16 n_anchors;
+    };
+  };
+};
