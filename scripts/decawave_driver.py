@@ -44,7 +44,8 @@ class DecawaveDriver(Node):
         self.baudrate_='115200'
         self.tf_publisher_ = "True"
         self.tf_reference_= 'world'
-        self.tag_name_='tag'
+        self.tag_name_='radio_tag'
+        self.child_id_name = 'map'
         self.rate_= 10
         self.timer_period = 0.5 # seconds
         # self.declare_parameter(0.5)
@@ -61,8 +62,9 @@ class DecawaveDriver(Node):
         self.anchors = AnchorArray()
         self.anchors.anchors = []
         self.tag = Tag()
+        self.offset=[0,0,0]
         self.odometry = Odometry()
-
+        self.calibrate()
         self.run()
 
     def get_uart_mode(self):
@@ -168,6 +170,7 @@ class DecawaveDriver(Node):
         self.tag.qf = float(data_[8])/100.0
         self.tag.n_anchors = int(data_[11])
         self.tag.header.frame_id = self.tag_name_
+        self.tag.header.child_frame_id = self.child_id_name
 
         self.anchor_packet_size = 20  # Size of anchor packet in bytes
         now = self.get_clock().now().to_msg()
@@ -209,9 +212,9 @@ class DecawaveDriver(Node):
                                       self.tf_reference_)
 
     def get_odometry(self):
-        self.odometry.pose.pose.position.x = self.tag.x
-        self.odometry.pose.pose.position.y = self.tag.y
-        self.odometry.pose.pose.position.z = self.tag.z
+        self.odometry.pose.pose.position.x = self.tag.x - self.offset[0]
+        self.odometry.pose.pose.position.y = self.tag.y - self.offset[1]
+        self.odometry.pose.pose.position.z = self.tag.z - self.offset[2]
         self.odometry.header.frame_id = self.tag.header.frame_id
         self.odometry.header.stamp = self.tag.header.stamp
 
@@ -259,6 +262,12 @@ class DecawaveDriver(Node):
         q[3] = sy * cp * cr - cy * sp * sr
     
         return q
+    
+    def calibrate(self):
+        self.get_tag_location()
+        self.offset[0]=self.tag.x
+        self.offset[1]=self.tag.y
+        self.offset[2]=self.tag.z
 
     def run(self):
         self.create_rate(self.rate_)

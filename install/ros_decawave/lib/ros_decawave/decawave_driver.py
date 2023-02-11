@@ -61,8 +61,9 @@ class DecawaveDriver(Node):
         self.anchors = AnchorArray()
         self.anchors.anchors = []
         self.tag = Tag()
+        self.offset=[0,0,0]
         self.odometry = Odometry()
-
+        self.calibrate()
         self.run()
 
     def get_uart_mode(self):
@@ -209,9 +210,9 @@ class DecawaveDriver(Node):
                                       self.tf_reference_)
 
     def get_odometry(self):
-        self.odometry.pose.pose.position.x = self.tag.x
-        self.odometry.pose.pose.position.y = self.tag.y
-        self.odometry.pose.pose.position.z = self.tag.z
+        self.odometry.pose.pose.position.x = self.tag.x - self.offset[0]
+        self.odometry.pose.pose.position.y = self.tag.y - self.offset[1]
+        self.odometry.pose.pose.position.z = self.tag.z - self.offset[2]
         self.odometry.header.frame_id = self.tag.header.frame_id
         self.odometry.header.stamp = self.tag.header.stamp
 
@@ -259,6 +260,12 @@ class DecawaveDriver(Node):
         q[3] = sy * cp * cr - cy * sp * sr
     
         return q
+    
+    def calibrate(self):
+        self.get_tag_location()
+        self.offset[0]=self.tag.x
+        self.offset[1]=self.tag.y
+        self.offset[2]=self.tag.z
 
     def run(self):
         self.create_rate(self.rate_)
