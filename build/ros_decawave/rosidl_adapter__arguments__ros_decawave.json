@@ -1,9 +1,0 @@
-{
-  "package_name": "ros_decawave",
-  "non_idl_tuples": [
-    "/home/pk/najnowsze_przepisywanie/ros_decawave:msg/Acc.msg",
-    "/home/pk/najnowsze_przepisywanie/ros_decawave:msg/Anchor.msg",
-    "/home/pk/najnowsze_przepisywanie/ros_decawave:msg/AnchorArray.msg",
-    "/home/pk/najnowsze_przepisywanie/ros_decawave:msg/Tag.msg"
-  ]
-}

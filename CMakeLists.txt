@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(ros_decawave)
+project(ariadna_radio_tag)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -19,6 +19,8 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
+
+
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Acc.msg"
   "msg/Anchor.msg"
@@ -29,9 +31,31 @@ rosidl_generate_interfaces(${PROJECT_NAME}
 # Install Python modules
 ament_python_install_package(${PROJECT_NAME})
 # Install Python executables
+# install(PROGRAMS
+#   scripts/decawave_driver.py
+#   scripts/ariadna_map_tf_broadcaster.py
+#   scripts/ariadna_radio_tag_tf_broadcaster.py
+#   DESTINATION lib/${PROJECT_NAME}
+# )
+
+# install(DIRECTORY
+#   launch
+#   DESTINATION share/${PROJECT_NAME}
+#   USE_SOURCE_PERMISSIONS
+# )
+
+
 install(PROGRAMS
-  scripts/decawave_driver.py
+  ${PROJECT_NAME}/decawave_driver.py
+  ${PROJECT_NAME}/ariadna_radio_tag_tf_broadcaster.py
+  ${PROJECT_NAME}/ariadna_map_tf_broadcaster.py
   DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  DIRECTORY launch
+  DESTINATION share/${PROJECT_NAME}
+  USE_SOURCE_PERMISSIONS
 )
 
 if(BUILD_TESTING)
